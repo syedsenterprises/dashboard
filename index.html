@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="color-scheme" content="light dark"/>
+<link rel="icon" href="data:,"/>
+<title>Syed Enterprises Dashboard</title>
+<style>
+:root{
+  --bg:#f4f6f5; --surface:#ffffff; --surface2:#edf2f0; --ink:#17201d; --muted:#5c6b66;
+  --line:#d8e0dc; --teal:#0c6b5e; --teal-soft:#dff0eb; --amber:#9a6206; --amber-soft:#fdf0d3;
+  --red:#a92c22; --red-soft:#fde6e3; --blue:#1d4e7a; --blue-soft:#e2edf7;
+  --radius:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#101514; --surface:#18201e; --surface2:#202a27; --ink:#eef3f1; --muted:#a7b6b0;
+  --line:#2c3a36; --teal:#4ec9b2; --teal-soft:#153b34; --amber:#f0bc5a; --amber-soft:#3d2f10;
+  --red:#ff9a8f; --red-soft:#40201c; --blue:#8ec2ef; --blue-soft:#1b3045; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:ui-sans-system,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5}
+a{color:var(--teal);text-decoration:none} a:hover{text-decoration:underline}
+.wrap{max-width:1180px;margin:0 auto;padding:22px 18px 56px}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;line-height:1.15;margin:0}
+h2{font-size:1.45rem;margin-bottom:6px}
+h3{font-size:1.05rem}
+.lede{color:var(--muted);max-width:68ch}
+.section{margin-top:34px}
+.section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.small{font-size:.86rem;color:var(--muted)}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:var(--surface2);color:var(--muted)}
+.tag.live{background:var(--teal-soft);color:var(--teal)}
+.tag.warn{background:var(--amber-soft);color:var(--amber)}
+.tag.blocked{background:var(--red-soft);color:var(--red)}
+.tag.info{background:var(--blue-soft);color:var(--blue)}
+/* hero */
+.hero{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:26px}
+.hero-top{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.hero h1{font-size:clamp(1.9rem,4.5vw,2.8rem);max-width:18ch}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:22px}
+.kpi{background:var(--surface2);border-radius:var(--radius);padding:16px}
+.kpi b{display:block;font-size:1.7rem;line-height:1;font-family:Georgia,serif}
+.kpi span{font-size:.82rem;color:var(--muted)}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:10px}
+.bar i{display:block;height:100%;background:var(--teal);border-radius:99px}
+.goal-goals{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.goal-goals .kpi{background:var(--surface);border:1px solid var(--line)}
+/* grid cards */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+.card p{margin:8px 0 0;color:var(--muted);font-size:.93rem}
+.card .row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.price{font-weight:800;white-space:nowrap}
+.card a.btn{display:inline-block;margin-top:12px;font-size:.86rem;font-weight:700;border:1px solid var(--teal);color:var(--teal);padding:7px 12px;border-radius:9px}
+.card a.btn:hover{background:var(--teal-soft);text-decoration:none}
+/* table → cards on mobile */
+.table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.table th,.table td{padding:12px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);font-size:.93rem}
+.table th{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:var(--surface2)}
+.table tr:last-child td{border-bottom:none}
+.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+/* filters */
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.filters button{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 14px;border-radius:999px;font-weight:700;cursor:pointer;font-size:.88rem}
+.filters button[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#fff}
+@media (prefers-color-scheme: dark){.filters button[aria-pressed="true"]{color:#0b1513}}
+.search{flex:1;min-width:200px;padding:10px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:.95rem}
+/* alerts */
+.alert{display:flex;gap:12px;background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--amber);border-radius:12px;padding:15px 16px;margin-bottom:10px}
+.alert.red{border-left-color:var(--red)}
+.alert strong{display:block}
+.alert p{margin:2px 0 0;color:var(--muted);font-size:.92rem}
+/* handles */
+.handle{display:flex;justify-content:space-between;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.handle b{display:block}.handle span{color:var(--muted);font-size:.88rem}
+/* schedule */
+.sched{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.sched .card{text-align:left}.sched b{font-family:Georgia,serif;font-size:1.25rem;display:block}
+footer{margin-top:40px;color:var(--muted);font-size:.85rem;border-top:1px solid var(--line);padding-top:16px}
+.hidden{display:none!important}
+/* forms / money tools */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+.form{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.form label{font-size:.8rem;font-weight:700;color:var(--muted);display:block}
+.form input,.form select{width:100%;margin-top:4px;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:.93rem;font-family:inherit}
+.form button{align-self:end;padding:10px 14px;border:none;border-radius:9px;background:var(--teal);color:#fff;font-weight:800;cursor:pointer;font-size:.92rem}
+@media (prefers-color-scheme: dark){.form button{color:#0b1513}}
+.form button:hover{opacity:.88}
+.netline{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px}
+.netline .kpi{flex:1;min-width:150px}
+code{background:var(--surface2);padding:2px 6px;border-radius:6px;font-size:.82rem;word-break:break-all}
+.copybtn{border:1px solid var(--line);background:var(--surface);color:var(--teal);border-radius:8px;padding:4px 10px;font-weight:700;cursor:pointer;font-size:.8rem;margin-left:8px}
+/* chart */
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+.chartbox svg{width:100%;height:auto;display:block}
+.axis{font-size:11px;fill:var(--muted)}
+.chartline{fill:none;stroke:var(--teal);stroke-width:2.5}
+.chartdot{fill:var(--teal)}
+.chartarea{fill:var(--teal);opacity:.12}
+/* tasks */
+.task{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.task input[type="checkbox"]{width:20px;height:20px;margin-top:2px;accent-color:var(--teal);flex:none;cursor:pointer}
+.task label{cursor:pointer}
+.task.done label{text-decoration:line-through;color:var(--muted)}
+.task p{margin:2px 0 0;color:var(--muted);font-size:.9rem}
+/* deadlines */
+.deadlines{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.deadline{background:var(--surface);border:1px solid var(--line);border-top:5px solid var(--teal);border-radius:12px;padding:16px}
+.deadline.soon{border-top-color:var(--red)}
+.deadline.near{border-top-color:var(--amber)}
+.deadline b{font-family:Georgia,serif;font-size:1.3rem;display:block}
+.deadline .days{font-weight:800;color:var(--teal)}
+.deadline.soon .days{color:var(--red)} .deadline.near .days{color:var(--amber)}
+@media(max-width:900px){.deadlines{grid-template-columns:1fr 1fr}.form{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.deadlines{grid-template-columns:1fr}.form{grid-template-columns:1fr}}
+@media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr 1fr}.sched{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){
+  .grid,.grid2,.dual-goals{grid-template-columns:1fr}
+  .table thead{display:none}.table,.table tbody,.table tr,.table td{display:block;width:100%}
+  .table tr{border-bottom:1px solid var(--line);padding:8px 0}.table td{border:none;padding:6px 14px}
+  .table td:first-child{font-weight:700}.num{text-align:left}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HERO / OVERVIEW -->
+  <header class="hero">
+    <div class="hero-top">
+      <div>
+        <p class="small" style="margin:0 0 8px">SYED ENTERPRISES · FOUNDER: SYED SHAHED (BYLINED “SYED SHAHID”) · HYDERABAD</p>
+        <h1>Everything you run, in one place.</h1>
+        <p class="lede">Earnings, income methods, ventures, websites, products and social handles — the whole operation at a glance. Snapshot as of <strong>7 November 2026</strong>, from your progress reports and site checks.</p>
+      </div>
+      <div><span class="tag warn">⚠ 5 things need attention — see below</span></div>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi"><b id="kpiEarned">$20</b><span>Earned so far — verified</span></div>
+      <div class="kpi"><b>6</b><span>Websites &amp; properties</span></div>
+      <div class="kpi"><b>7</b><span>Digital products live (+ 1 ready to list)</span></div>
+      <div class="kpi"><b>167</b><span>Leads contacted — of 171 total, 4 held</span></div>
+    </div>
+
+    <div class="dual-goals">
+      <div class="kpi">
+        <b><span id="goal500Now">$20</span> <span style="font-size:1rem;color:var(--muted)">/ $500 goal</span></b>
+        <span>Current income goal tracked in your 4×-daily progress reports · <span id="goal500Left">$480</span> to go</span>
+        <div class="bar" role="img" aria-label="Progress toward 500 dollar goal"><i id="bar500" style="width:4%"></i></div>
+        <span id="pct500">4% there</span>
+      </div>
+      <div class="kpi">
+        <b><span id="goal2000Now">$20</span> <span style="font-size:1rem;color:var(--muted)">/ $2,000 goal</span></b>
+        <span>Revenue goal shown on syedsenterprises.org · the small number is earned, $2,000 is the target — not yet earned</span>
+        <div class="bar" role="img" aria-label="Progress toward 2000 dollar goal"><i id="bar2000" style="width:1%"></i></div>
+        <span id="pct2000">1% there</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- EARNINGS -->
+  <section class="section" aria-labelledby="earn-h">
+    <div class="section-head"><div><h2 id="earn-h">Earnings</h2><p class="small">Only verified money is counted. Everything else is listed as a live method, not as income.</p></div></div>
+    <table class="table">
+      <thead><tr><th>Source</th><th>What it was</th><th>Status</th><th class="num">Amount</th></tr></thead>
+      <tbody>
+        <tr><td>LookForIt — paid link placement</td><td>Dofollow link for Krea (Tobi), placed on a confirmed-clean Luma page · paid 3 Nov 2026</td><td><span class="tag live">Received</span></td><td class="num"><strong>$20.00</strong></td></tr>
+        <tr><td>Gumroad products</td><td>Florida exam packs, cheat sheets, workbooks, cat products — live, awaiting first sale for Discover</td><td><span class="tag info">Live · $0 yet</span></td><td class="num">$0</td></tr>
+        <tr><td>Freelancer — SEO article service</td><td>“SEO Real Estate Blog Article Writing” · $30 / $55 / $85 tiers · 0 reviews so far</td><td><span class="tag info">Live · $0 yet</span></td><td class="num">$0</td></tr>
+        <tr><td>CRM outreach</td><td>167 of 171 leads emailed 1 Nov (4 held) · demo pitch, replies pending</td><td><span class="tag info">In progress</span></td><td class="num">$0</td></tr>
+        <tr><td>AdSense / Adsterra</td><td>Adsterra live on Estate Path (2 units). AdSense flagged “low-value content” — no ads serving until a re-review passes</td><td><span class="tag warn">Blocked</span></td><td class="num">$0</td></tr>
+        <tr><td colspan="3" style="font-weight:700">Total earnings — updates when you add a sale below</td><td class="num"><strong id="earnTableTotal">$20.00</strong></td></tr>
+      </tbody>
+    </table>
+    <p class="small" style="margin-top:10px">Accounts in use: PayPal linked to Fiverr / Upwork / Gumroad under syedsinterprises@gmail.com. Freelancer profile @syedsenterprises, $20/hr listed, payment / phone / email verified — identity verification still pending (needed for projects ≥ $2,500).</p>
+  </section>
+
+  <!-- MONEY OVER TIME + ADD A SALE + EXPENSES -->
+  <section class="section" aria-labelledby="money-h">
+    <div class="section-head"><div><h2 id="money-h">Money over time — add a sale, track expenses</h2><p class="small">The chart starts from your one verified payment. Add a sale or an expense below and the totals, both goal bars, the history and the chart update straight away. Entries are kept for this visit — use “Download entries (CSV)” before you leave to keep a copy.</p></div></div>
+    <div class="chartbox">
+      <h3>Cumulative earnings</h3>
+      <div id="chartWrap" role="img" aria-label="Line chart of cumulative earnings: zero until 3 November 2026, then 20 dollars"></div>
+      <p class="small" id="chartNote" style="margin:8px 0 0">One data point so far: $20 on 3 Nov 2026 (Krea link placement). The line moves as you log more sales.</p>
+    </div>
+    <div class="grid2" style="margin-top:14px">
+      <div class="panel">
+        <h3>➕ Add a sale / payment</h3>
+        <form class="form" id="saleForm" style="grid-template-columns:1fr 1fr">
+          <div><label for="saleDate">Date</label><input id="saleDate" type="date" value="2026-11-07" required/></div>
+          <div><label for="saleAmount">Amount (USD)</label><input id="saleAmount" type="number" min="0.01" step="0.01" placeholder="e.g. 55" required/></div>
+          <div><label for="saleSource">Source</label><select id="saleSource"><option>Gumroad</option><option>Payhip</option><option>Paid link placement</option><option>Freelancer</option><option>CRM / RepRoaster</option><option>Other</option></select></div>
+          <div><label for="saleNote">What for (optional)</label><input id="saleNote" type="text" placeholder="e.g. Florida Exam Pack"/></div>
+          <button type="submit">Add to total</button>
+        </form>
+      </div>
+      <div class="panel">
+        <h3>➖ Log an expense</h3>
+        <form class="form" id="expForm" style="grid-template-columns:1fr 1fr">
+          <div><label for="expDate">Date</label><input id="expDate" type="date" value="2026-11-07" required/></div>
+          <div><label for="expAmount">Amount (USD)</label><input id="expAmount" type="number" min="0.01" step="0.01" placeholder="e.g. 15" required/></div>
+          <div><label for="expItem">Item</label><select id="expItem"><option>Whop — RepRoaster</option><option>Domain renewal</option><option>Hosting</option><option>Ads / promotion</option><option>Other</option></select></div>
+          <div><label for="expNote">Note (optional)</label><input id="expNote" type="text" placeholder="e.g. reproaster.store"/></div>
+          <button type="submit">Log expense</button>
+        </form>
+      </div>
+    </div>
+    <div class="netline">
+      <div class="kpi"><b id="grossTotal">$20.00</b><span>Gross earned (verified + logged here)</span></div>
+      <div class="kpi"><b id="expTotal">$0.00</b><span>Expenses logged here</span></div>
+      <div class="kpi"><b id="netTotal">$20.00</b><span>Net — before any costs you haven’t logged</span></div>
+    </div>
+    <table class="table" style="margin-top:14px">
+      <thead><tr><th>Date</th><th>Entry</th><th>Type</th><th class="num">Amount</th></tr></thead>
+      <tbody id="historyBody">
+        <tr><td>3 Nov 2026</td><td>LookForIt — Krea paid link placement (Tobi)</td><td><span class="tag live">Sale · verified</span></td><td class="num"><strong>+$20.00</strong></td></tr>
+      </tbody>
+    </table>
+    <p class="small" style="margin-top:10px"><strong>Known costs not yet in the numbers:</strong> the Whop RepRoaster subscription payment <em>failed</em> on 7 Nov (card declined, insufficient funds) — the amount isn’t in the mail records, so it isn’t guessed here; log it above once paid. Domain renewals for your 6 properties aren’t recorded either. Until those are logged, treat “net” as gross minus only what’s listed. <button class="copybtn" id="csvBtn" type="button">Download entries (CSV)</button></p>
+  </section>
+
+  <!-- TASKS -->
+  <section class="section" aria-labelledby="tasks-h">
+    <div class="section-head"><div><h2 id="tasks-h">Tasks — tick them off</h2><p class="small">Your open actions, as a checklist. <span id="taskProgress">0 of 6 done</span> — ticks hold for this visit; the underlying jobs (paying Whop, adding DNS) still happen in those accounts.</p></div></div>
+    <div id="taskList">
+      <div class="task"><input type="checkbox" id="t1"/><div><label for="t1"><strong>Pay the failed Whop payment — RepRoaster</strong></label><p>Failed 7 Nov 03:36 IST, Kotak card declined (insufficient funds). Subscription at risk of cancellation and the webhook is failing — checkout is at risk until paid.</p></div></div>
+      <div class="task"><input type="checkbox" id="t2"/><div><label for="t2"><strong>Reply to Serpstat (editorial / paid-link follow-up)</strong></label><p>Flagged as the next money action in your 12:00 and 17:00 progress reports on 7 Nov.</p></div></div>
+      <div class="task"><input type="checkbox" id="t3"/><div><label for="t3"><strong>Add DNS TXT for letusassume.in, then verify in Search Console &amp; Bing</strong></label><p><code>google-site-verification=sFIBKvksyWEOkjG86nAqvTHwm2AvR0FdWcbld3MkE5M</code><button class="copybtn" type="button" data-copy="google-site-verification=sFIBKvksyWEOkjG86nAqvTHwm2AvR0FdWcbld3MkE5M">Copy</button> Sitemap (~15 URLs) is ready to submit once verified.</p></div></div>
+      <div class="task"><input type="checkbox" id="t4"/><div><label for="t4"><strong>Add DNS TXT for reproaster.store, then verify in Search Console &amp; Bing</strong></label><p><code>google-site-verification=kuVQATI2FdB_KaiyiWKjTiAO_myc_LeddjVtwTbBzhc</code><button class="copybtn" type="button" data-copy="google-site-verification=kuVQATI2FdB_KaiyiWKjTiAO_myc_LeddjVtwTbBzhc">Copy</button></p></div></div>
+      <div class="task"><input type="checkbox" id="t5"/><div><label for="t5"><strong>Re-check the LookForIt sitemap in Search Console</strong></label><p>“Couldn’t fetch” since 27 Oct; re-submitted 7 Nov, 0 pages via sitemap. The file loads fine and Bing reads it (185 URLs) — re-check after Google retries.</p></div></div>
+      <div class="task"><input type="checkbox" id="t6"/><div><label for="t6"><strong>Fix Estate Path content, THEN request AdSense review</strong></label><p>About page 404, stale/duplicated Amendment 3 posts, off-topic Mexico post, author bio. Do not click “Request review” before these are done.</p></div></div>
+    </div>
+  </section>
+
+  <!-- DEADLINES -->
+  <section class="section" aria-labelledby="dead-h">
+    <div class="section-head"><div><h2 id="dead-h">Deadlines</h2><p class="small">Counted from today, 7 November 2026.</p></div></div>
+    <div class="deadlines">
+      <div class="deadline soon"><span class="tag blocked">Next</span><b>10 Nov 2026</b><span class="small">YouTube advanced features — reapply window opens (NANO GHOST GAMER; appeal before 10 Dec)</span><br/><span class="days">in 3 days</span></div>
+      <div class="deadline soon"><span class="tag blocked">Next</span><b>~11 Nov 2026</b><span class="small">RepRoaster / Whop renewal — the failed 7 Nov payment needs clearing before this lands</span><br/><span class="days">in ~4 days</span></div>
+      <div class="deadline"><span class="tag info">Kaggle</span><b>13 Jan 2027</b><span class="small">Quantum Compilation — entry / team-merger deadline</span><br/><span class="days">in 67 days</span></div>
+      <div class="deadline"><span class="tag info">Kaggle</span><b>20 Jan 2027</b><span class="small">Quantum Compilation — final deadline. Public notebook must stay public through this date</span><br/><span class="days">in 74 days</span></div>
+    </div>
+  </section>
+
+  <!-- OUTREACH TRACKER -->
+  <section class="section" aria-labelledby="out-h">
+    <div class="section-head"><div><h2 id="out-h">Outreach tracker</h2><p class="small">Campaign totals from your mail and progress reports, checked 7 Nov 2026. Individual lead names sit in your CRM lead files (~/workspace/your_files/crm-leads/) — this page tracks the campaigns, and you can log new replies or payments below.</p></div></div>
+    <table class="table">
+      <thead><tr><th>Campaign</th><th class="num">Total</th><th class="num">Sent</th><th>Status</th><th>Follow-up</th></tr></thead>
+      <tbody>
+        <tr><td><strong>CRM leads — real-estate agencies</strong><br/><span class="small">Sent 1 Nov 2026 · demo pitch, no price in the mail</span></td><td class="num">171</td><td class="num">167</td><td><span class="tag info">Sent · no replies recorded yet</span><br/><span class="small">4 held, never sent: Landmark Associates (Indore), Unity Realities (Nagpur), OpenKey, Hutson Group. Cory Woods replied on the CRM pivot (articles declined). Island Group opted out — never contact again.</span></td><td>18 brokerage follow-ups were mis-sent to your own mailbox — re-send still pending a decision</td></tr>
+        <tr><td><strong>Gym / CRM wave 2</strong><br/><span class="small">Sent night of 6 Nov 2026</span></td><td class="num">19</td><td class="num">18 delivered</td><td><span class="tag warn">1 bounced</span><br/><span class="small">Solitaire Fitness (info@solitairefitness.com) — 550, address does not exist. 10 CRM + 8 gym mails delivered.</span></td><td>Watch for replies in both mailboxes; no reply recorded as of 7 Nov</td></tr>
+        <tr><td><strong>Paid-link pitches — LookForIt</strong></td><td class="num">79</td><td class="num">79</td><td><span class="tag live">1 paid — $20</span><br/><span class="small">Krea (Tobi) paid 3 Nov, link live on a clean Luma page. Vizard (Sekou) replied 5 Nov, redirecting collaboration queries to BluePulse — no acceptance or payment.</span></td><td>Serpstat reply is the open next step — see Tasks</td></tr>
+      </tbody>
+    </table>
+    <div class="panel" style="margin-top:14px">
+      <h3>Log an outreach update</h3>
+      <form class="form" id="outForm">
+        <div><label for="outCampaign">Campaign</label><select id="outCampaign"><option>CRM leads</option><option>Gym / CRM wave 2</option><option>Paid-link pitches</option></select></div>
+        <div><label for="outName">Lead / company</label><input id="outName" type="text" placeholder="e.g. Green Valley Properties" required/></div>
+        <div><label for="outStatus">New status</label><select id="outStatus"><option>Replied</option><option>Paid</option><option>Follow-up sent</option><option>Not interested</option><option>Bounced</option></select></div>
+        <div><label for="outFollow">Follow-up date</label><input id="outFollow" type="date"/></div>
+        <button type="submit">Log update</button>
+      </form>
+      <table class="table" style="margin-top:12px">
+        <thead><tr><th>Campaign</th><th>Lead</th><th>Status</th><th>Follow-up</th></tr></thead>
+        <tbody id="outBody"><tr id="outEmpty"><td colspan="4" class="small">No updates logged yet this visit.</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- CONNECTIONS & HOSTING -->
+  <section class="section" aria-labelledby="conn-h">
+    <div class="section-head"><div><h2 id="conn-h">Live numbers &amp; hosting — the honest setup</h2><p class="small">What updates by itself, what doesn’t, and where this page should live.</p></div></div>
+    <div class="grid">
+      <article class="card"><div class="row"><h3>Gmail</h3><span class="tag info">Checked for you</span></div><p>Both mailboxes (syedsinterprises@gmail.com and ampersent.com@gmail.com) are read during your 4×-daily progress reports — that’s how the $20 Krea payment was caught. This page itself can’t watch your inbox between reports; new payment mails show up here at the next report, or instantly when you add them with the form above.</p></article>
+      <article class="card"><div class="row"><h3>Gumroad &amp; Payhip</h3><span class="tag info">Manual + form</span></div><p>There’s no live Gumroad/Payhip feed feeding this page — a static page can’t hold your store logins. First sale will surface via the Gmail payout/sale mails in the progress reports. Until a server version exists, the “Add a sale” form is the live update path.</p></article>
+      <article class="card"><div class="row"><h3>Search Console traffic</h3><span class="tag info">Manual</span></div><p>No Search Console connection, as you said — traffic stays a manual update. Last checked 7 Nov: Estate Path 311 clicks, 19 indexed / 89 not. Ask for a refresh and the numbers get pulled in.</p></article>
+      <article class="card"><div class="row"><h3>Hosting — dashboard.syedsenterprises.org</h3><span class="tag warn">Decision: keep it private</span></div><p>This page holds your earnings, outreach and blockers — that’s not public material. Recommendation: <strong>private</strong>. Keep using this dashboard link (visible only to you), and if you want the subdomain, put it behind access control (e.g. Cloudflare Access with your Google login) rather than open on the public web. A public, read-only version with money and lead details removed can be made separately if you ever want one.</p></article>
+      <article class="card"><div class="row"><h3>What a fully-live version needs</h3><span class="tag info">Next step</span></div><p>True auto-sync (Gmail/Gumroad watching themselves), sales and ticks that survive closing the page, and a login on the subdomain all need a small server behind the page. Say the word and it gets rebuilt that way; everything above works in the meantime, per visit.</p></article>
+    </div>
+  </section>
+
+  <!-- NEEDS ATTENTION -->
+  <section class="section" aria-labelledby="alert-h">
+    <div class="section-head"><div><h2 id="alert-h">Needs attention</h2><p class="small">Real blockers from your mail and site checks this week — in priority order.</p></div></div>
+    <div class="alert red"><div>🔴</div><div><strong>RepRoaster on Whop — payment failed (7 Nov, 03:36 IST)</strong><p>Kotak debit card declined, insufficient funds. Whop says the subscription is at risk of cancellation and its webhook has been failing for 24 hours — checkout is at risk until this is paid.</p></div></div>
+    <div class="alert"><div>🟡</div><div><strong>Estate Path — AdSense “Needs attention: low-value content”</strong><p>Do <em>not</em> click “Request review” yet. First fix: the About page 404, the stale / duplicated Amendment 3 posts, the off-topic Mexico post, and the author bio. Ads won’t serve until a post-fix review passes.</p></div></div>
+    <div class="alert"><div>🟡</div><div><strong>LookForIt — sitemap “Couldn’t fetch” in Search Console since 27 Oct</strong><p>Re-submitted 7 Nov, still failing, 0 pages via sitemap — though the file itself loads fine and Bing has it (185 URLs, success). Needs a re-check once Google retries.</p></div></div>
+    <div class="alert"><div>🟡</div><div><strong>Two sites still unverified in Search Console &amp; Bing</strong><p><strong>letusassume.in</strong> and <strong>reproaster.store</strong> each need one DNS TXT record added, then verification, sitemap and indexing can be run for both.</p></div></div>
+    <div class="alert"><div>🟡</div><div><strong>RepRoaster “www” subdomain still not loading</strong><p>Apex (reproaster.store) is live and checkout works there. Don’t re-add www in Replit Domains or edit DNS on this check alone.</p></div></div>
+  </section>
+
+  <!-- METHODS -->
+  <section class="section" aria-labelledby="methods-h">
+    <div class="section-head">
+      <div><h2 id="methods-h">Income methods</h2><p class="small">Every way Syed Enterprises is set up to make money — and where each one stands.</p></div>
+      <div class="filters" role="group" aria-label="Filter methods">
+        <button data-filter="all" aria-pressed="true">All</button>
+        <button data-filter="live" aria-pressed="false">Live</button>
+        <button data-filter="building" aria-pressed="false">Building</button>
+        <button data-filter="blocked" aria-pressed="false">Blocked</button>
+        <button data-filter="paused" aria-pressed="false">Paused</button>
+      </div>
+    </div>
+    <div class="grid" id="methodGrid">
+      <article class="card" data-status="live"><div class="row"><h3>Paid link placements</h3><span class="tag live">Live · earned</span></div><p>LookForIt link placements for SaaS brands. First sale closed: Krea, $20.</p></article>
+      <article class="card" data-status="live"><div class="row"><h3>SEO article writing</h3><span class="tag live">Live</span></div><p>Freelancer service at $30 / $55 / $85. Standard pitch: $55, 4-day delivery, aimed at real-estate brokerages with visible site gaps.</p></article>
+      <article class="card" data-status="live"><div class="row"><h3>Digital products — Gumroad</h3><span class="tag live">Live</span></div><p>Exam packs, cheat sheets, workbooks and cat products under “Syed Shahid” at syedventures.gumroad.com. See products below.</p></article>
+      <article class="card" data-status="building"><div class="row"><h3>RepRoaster — gym CRM (SaaS)</h3><span class="tag info">Building</span></div><p>₹499/mo · ₹5,499/yr, 7-day trial enabled, checkout live on the apex domain. PayPal is the primary billing option in the UI; Razorpay was rejected (unregistered-individual / listing type) — Udyam NIC update to division 62/6311 needed before re-applying.</p></article>
+      <article class="card" data-status="building"><div class="row"><h3>CRM for real-estate agencies</h3><span class="tag info">Building</span></div><p>crm.estatepath.online — referral system built (Starter $5 / Growth $10 / Scale $15, first paid invoice only). 171-lead campaign sent; gym wave 2 followed.</p></article>
+      <article class="card" data-status="blocked"><div class="row"><h3>Blog ads — Estate Path</h3><span class="tag blocked">Blocked</span></div><p>Adsterra is live (native banner on posts + homepage leaderboard). AdSense is held by the low-value-content flag until the site fixes are done and a review passes.</p></article>
+      <article class="card" data-status="live"><div class="row"><h3>Blog ads — Let Us Assume</h3><span class="tag live">Experiment</span></div><p>18 posts on money-making in India. You’ve called it a “waste domain” and given experiment permission — SEO / Adsterra tests allowed there.</p></article>
+      <article class="card" data-status="live"><div class="row"><h3>YouTube — NANO GHOST GAMER</h3><span class="tag live">Live</span></div><p>Daily Short at 6:00 PM IST (Blox Fruits weekdays, Marvel Rivals weekends). Not yet in the Partner Program; advanced features reapply from 10 Nov 2026.</p></article>
+      <article class="card" data-status="paused"><div class="row"><h3>Fiverr &amp; Upwork</h3><span class="tag warn">Paused</span></div><p>Accounts exist under syedsinterprises@gmail.com with PayPal linked, but both were dropped on 23 Oct (Fiverr sign-in flagged the browser as a bot; gig state unknown).</p></article>
+    </div>
+  </section>
+
+  <!-- WEBSITES -->
+  <section class="section" aria-labelledby="sites-h">
+    <div class="section-head"><div><h2 id="sites-h">Websites</h2><p class="small">Search Console &amp; Bing status checked 7 Nov 2026.</p></div></div>
+    <table class="table">
+      <thead><tr><th>Site</th><th>What it is</th><th>Search / ads status</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td><a href="https://www.estatepath.online">estatepath.online</a></td><td>Florida real-estate blog — “Estate Path”, bylined Syed Shahid</td><td>311 clicks in Search Console · 19 indexed / 89 not · sitemap OK (32 pages) · AdSense: low-value flag</td><td><span class="tag warn">Fix content</span></td></tr>
+        <tr><td><a href="https://www.lookforit.xyz">lookforit.xyz</a></td><td>AI tools directory — 153 verified tools, 20 categories, 20 free tools, 38 articles</td><td>Homepage + /tools/ indexed · /free-tools/ not on Google · Google sitemap “Couldn’t fetch” · Bing sitemap OK (185 URLs)</td><td><span class="tag warn">Sitemap issue</span></td></tr>
+        <tr><td><a href="https://syedsenterprises.org">syedsenterprises.org</a></td><td>Syed Enterprises hub site</td><td>Merchant fix verified 7 Nov: 9/9 product snippets + 9/9 merchant listings valid · sitemap OK (8 pages) · indexing requested</td><td><span class="tag live">Healthy</span></td></tr>
+        <tr><td><a href="https://crm.estatepath.online">crm.estatepath.online</a></td><td>Agency CRM</td><td>Covered by the estatepath.online domain property · homepage indexed · no sitemap/robots · Bing: discovered, not crawled</td><td><span class="tag live">Live</span></td></tr>
+        <tr><td>reproaster.store</td><td>RepRoaster gym CRM — checkout live on apex</td><td>Not verified in Search Console or Bing — needs DNS TXT · www subdomain not loading · Whop payment failed</td><td><span class="tag blocked">Action needed</span></td></tr>
+        <tr><td>letusassume.in</td><td>Money-making in India blog — 18 posts</td><td>Not verified in Search Console or Bing — needs DNS TXT · sitemap ready (~15 URLs) once verified</td><td><span class="tag blocked">Unverified</span></td></tr>
+      </tbody>
+    </table>
+    <p class="small" style="margin-top:10px">Security check (7 Nov, read-only): Estate Path &amp; Let Us Assume clean. LookForIt and the hub have no security headers yet (Cloudflare Transform Rules would fix it). CRM headers are good, but it still leaks “X-Powered-By: Express” and its version at /api/health.</p>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section class="section" aria-labelledby="prod-h">
+    <div class="section-head"><div><h2 id="prod-h">Products on sale</h2><p class="small">Gumroad store: syedventures.gumroad.com · Payhip carries the two cat products.</p></div></div>
+    <div class="grid">
+      <article class="card"><div class="row"><h3>Florida Exam Practice Pack</h3><span class="price">$14.99</span></div><p>150 questions, PDF. A free 10-question sample is also live.</p><a class="btn" href="https://syedventures.gumroad.com/l/wnqwkw">Open on Gumroad →</a> <a class="btn" href="https://syedventures.gumroad.com/l/ybvjnno">Free sample →</a></article>
+      <article class="card"><div class="row"><h3>Florida Cheat Sheets</h3><span class="price">$7.99</span></div><p>6 cards: licensing, escrow, agency, math, taxes, landlord-tenant.</p><a class="btn" href="https://syedventures.gumroad.com/l/cheatsheets">Open on Gumroad →</a></article>
+      <article class="card"><div class="row"><h3>Florida Math Workbook</h3><span class="price">$9.99</span></div><p>72 problems with worked solutions.</p><a class="btn" href="https://syedventures.gumroad.com/l/mathworkbook">Open on Gumroad →</a></article>
+      <article class="card"><div class="row"><h3>Complete Kit</h3><span class="price">$21.99</span></div><p>Practice Pack + Math Workbook. Kit + Cheat Sheets bundle: $27.99.</p><a class="btn" href="https://syedventures.gumroad.com/l/ezyibg">Kit →</a> <a class="btn" href="https://syedventures.gumroad.com/l/mpvib">Kit + Sheets →</a></article>
+      <article class="card"><div class="row"><h3>Florida Formula Sheet</h3><span class="price">Free</span></div><p>$0+ lead magnet on Gumroad.</p><a class="btn" href="https://syedventures.gumroad.com/l/hybqs">Open on Gumroad →</a></article>
+      <article class="card"><div class="row"><h3>Cat Training Guide</h3><span class="price">$7.99</span></div><p>4 pages, reward-based: litter, scratching, play, recall, carrier, new cat. Not veterinary advice.</p><a class="btn" href="https://syedventures.gumroad.com/l/nmwgn">Gumroad →</a> <a class="btn" href="https://payhip.com/b/AcdJa">Payhip →</a></article>
+      <article class="card"><div class="row"><h3>Cat Catcher — browser game</h3><span class="price">$3.99</span></div><p>One-page offline game: 60 seconds, 3 levels.</p><a class="btn" href="https://syedventures.gumroad.com/l/fuytfo">Gumroad →</a> <a class="btn" href="https://payhip.com/b/6lUg2">Payhip →</a></article>
+      <article class="card"><div class="row"><h3>RepRoaster subscription</h3><span class="price">₹499/mo</span></div><p>Gym CRM, ₹5,499/yr option, 7-day trial enabled. Prices $29/$79/$199 elsewhere in the CRM are still placeholders.</p><span class="tag warn">Whop payment failed — see alerts</span></article>
+      <article class="card"><div class="row"><h3>Indian Fresher Job Kit</h3><span class="price">Not listed</span></div><p>Built 5 Nov: PDF guide, 3 DOCX resume templates (Tech / Commerce / General), Excel application tracker. Proposed ₹249 / $4.99 — awaiting your go and platform choice.</p><span class="tag info">Ready to list</span></article>
+    </div>
+  </section>
+
+  <!-- SOCIAL HANDLES -->
+  <section class="section" aria-labelledby="social-h">
+    <div class="section-head">
+      <div><h2 id="social-h">Social &amp; platform handles</h2><p class="small">Search to jump straight to an account.</p></div>
+      <input class="search" id="handleSearch" type="search" placeholder="Search handles… e.g. Pinterest, Kaggle" aria-label="Search handles"/>
+    </div>
+    <div class="grid2" id="handleGrid">
+      <div class="handle" data-name="linkedin syedsenterprises profile"><div><b>LinkedIn</b><span>@syedsenterprises — “SEO Content Writer for Real Estate | Founder, Estate Path” · St. Mary’s College CS, 2024–2027</span></div><span class="tag warn">Check before posting</span></div>
+      <div class="handle" data-name="pinterest estatepath"><div><b>Pinterest</b><span>@estatepath — fully rebranded to Estate Path</span></div><span class="tag live">Active</span></div>
+      <div class="handle" data-name="youtube nano ghost gamer gaming"><div><b>YouTube</b><span>@nanoghostgamer — NANO GHOST GAMER, gaming channel (created 30 Sep 2023)</span></div><span class="tag live">Daily Shorts</span></div>
+      <div class="handle" data-name="gumroad syedventures store"><div><b>Gumroad</b><span>syedventures.gumroad.com — store name “Syed Shahid”</span></div><span class="tag live">Selling</span></div>
+      <div class="handle" data-name="freelancer syedsenterprises"><div><b>Freelancer</b><span>@syedsenterprises — $20/hr · identity verification still pending</span></div><span class="tag live">Bidding open</span></div>
+      <div class="handle" data-name="fiverr upwork syedsinterprises"><div><b>Fiverr &amp; Upwork</b><span>Under syedsinterprises@gmail.com, PayPal linked</span></div><span class="tag warn">Dropped 23 Oct</span></div>
+      <div class="handle" data-name="kaggle letusassume quantum"><div><b>Kaggle</b><span>letusassume (Syed Shahid) — Quantum Circuit Compilation competition</span></div><span class="tag live">Score 1.08972</span></div>
+      <div class="handle" data-name="github syedsenterprises lookforit web3user"><div><b>GitHub</b><span>syedsenterprises — lookforit, syedsenterprises hub, Web3User-Permission-Lab</span></div><span class="tag live">Public repos clean</span></div>
+      <div class="handle" data-name="paypal syedsinterprises payments"><div><b>PayPal</b><span>Linked across Fiverr, Upwork and Gumroad — primary billing route for the CRM</span></div><span class="tag live">Linked</span></div>
+      <div class="handle" data-name="roblox estatepath"><div><b>Roblox</b><span>Username: estatepath — you play, edits/uploads handled for the channel</span></div><span class="tag info">Gaming</span></div>
+    </div>
+    <p class="small hidden" id="noHandles" style="margin-top:12px">No handle matches that search.</p>
+  </section>
+
+  <!-- PROGRESS / OTHER TRACKS -->
+  <section class="section" aria-labelledby="prog-h">
+    <div class="section-head"><div><h2 id="prog-h">Other tracks in progress</h2></div></div>
+    <div class="grid">
+      <article class="card"><div class="row"><h3>Kaggle — Quantum Compilation</h3><span class="tag live">Entered</span></div><p>Google Quantum AI competition, $150K pool. Best score so far: <strong>1.08972</strong> (v5). GF(2¹²) tower inversion cut Toffolis from 315 → 126 per position. Final deadline <strong>20 Jan 2027</strong>; the public notebook must stay public through the deadline.</p></article>
+      <article class="card"><div class="row"><h3>IIT research internship — Summer 2027</h3><span class="tag info">Preparing</span></div><p>Goal: use the Kaggle project as portfolio evidence. SRFP 2027 is out (final-year BSc isn’t eligible). Best routes: IIT Madras Summer Fellowship (window not yet published), IIT Kanpur SURGE (expected Jan–Feb 2027), and direct professor emails — profile and draft are built, not yet sent.</p></article>
+      <article class="card"><div class="row"><h3>Client pipeline</h3><span class="tag info">Awaiting replies</span></div><p>171-lead CRM campaign sent 1 Nov (167 sent, 4 held and never sent). Cory Woods pivoted to the CRM after declining articles. Island Group opted out — never contact again. Wyse, Seltzer and Kelly Price are on hold.</p></article>
+    </div>
+  </section>
+
+  <!-- RHYTHM -->
+  <section class="section" aria-labelledby="sched-h">
+    <div class="section-head"><div><h2 id="sched-h">Your running rhythm</h2><p class="small">Schedules already set — so you can see the whole week at a glance.</p></div></div>
+    <div class="sched">
+      <div class="card"><b>9:15 AM</b><span class="small">Daily — J.A.R.V.I.S. morning board brief (IST)</span></div>
+      <div class="card"><b>9:00 AM</b><span class="small">Mon / Wed / Fri — fresh Estate Path article, published instantly</span></div>
+      <div class="card"><b>6:00 PM</b><span class="small">Daily — new YouTube Short, published public (IST)</span></div>
+      <div class="card"><b>12 · 5 · 12 · 5</b><span class="small">Progress reports at 12 PM, 5 PM, 12 AM &amp; 5 AM IST — income vs goal + verifiable traffic</span></div>
+    </div>
+    <p class="small" style="margin-top:12px">Company structure: you’re CEO of <strong>SYED VENTURES</strong>; J.A.R.V.I.S. is Director of Operations across 9 departments (Content &amp; SEO, Finance, Marketing &amp; Social, Product Lab, R&amp;D, Sales, Video Studio, Legal, Global Expansion). Standing rule from the charter: $0 revenue + no growth after 30 days triggers a shutdown recommendation for a venture.</p>
+  </section>
+
+  <footer>
+    Snapshot built 7 November 2026 from your progress reports, Gmail checks, Search Console / Bing work and security audit of the same week. Sales, expenses, outreach updates and task ticks you enter above apply to this visit — download the CSV to keep them, or ask for a refresh and the latest verified numbers get pulled in. Hosting decision: keep this dashboard private (it carries earnings and lead details); dashboard.syedsenterprises.org only behind a login, never as an open public page.
+  </footer>
+</div>
+
+<script>
+(function(){
+  function fmt(n){return '$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');}
+  function fmtShort(n){return '$'+(Math.round(n*100)/100).toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');}
+  function dstr(iso){var d=new Date(iso+'T00:00:00');return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});}
+
+  /* ---- money state (this visit) ---- */
+  var sales=[{date:'2026-11-03',source:'LookForIt — Krea paid link placement (Tobi)',amount:20,verified:true}];
+  var expenses=[];
+  var entries=[]; // session entries for CSV
+
+  function totals(){
+    var g=0,e=0,i;
+    for(i=0;i<sales.length;i++)g+=sales[i].amount;
+    for(i=0;i<expenses.length;i++)e+=expenses[i].amount;
+    return {gross:g,exp:e,net:g-e};
+  }
+
+  function drawChart(){
+    var wrap=document.getElementById('chartWrap');
+    var pts=sales.slice().sort(function(a,b){return a.date<b.date?-1:1;});
+    var start='2026-10-22', end='2026-11-07';
+    var last=pts.length?pts[pts.length-1].date:end;
+    if(last>end)end=last;
+    var t0=new Date(start+'T00:00:00').getTime(), t1=new Date(end+'T00:00:00').getTime();
+    var maxV=20; pts.forEach(function(p){ /* cumulative max computed below */ });
+    var cum=0; var coords=[{t:t0,v:0}];
+    pts.forEach(function(p){cum+=p.amount;coords.push({t:new Date(p.date+'T00:00:00').getTime(),v:cum});});
+    coords.push({t:t1,v:cum});
+    if(cum>maxV)maxV=cum;
+    var W=720,H=220,pl=48,pr=16,pt=14,pb=30,iw=W-pl-pr,ih=H-pt-pb;
+    function X(t){return pl+iw*(t-t0)/Math.max(1,(t1-t0));}
+    function Y(v){return pt+ih-(ih*v/(maxV*1.15));}
+    var line='',area='',dots='',i,c;
+    for(i=0;i<coords.length;i++){c=coords[i];line+=(i?'L':'M')+X(c.t).toFixed(1)+' '+Y(c.v).toFixed(1)+' ';}
+    area=line+'L'+X(t1).toFixed(1)+' '+Y(0).toFixed(1)+' L'+X(t0).toFixed(1)+' '+Y(0).toFixed(1)+' Z';
+    for(i=1;i<coords.length-1;i++){c=coords[i];dots+='<circle class="chartdot" cx="'+X(c.t).toFixed(1)+'" cy="'+Y(c.v).toFixed(1)+'" r="4"/>';}
+    var grid='';
+    [0,0.5,1].forEach(function(f){var v=maxV*f,y=Y(v);grid+='<line x1="'+pl+'" y1="'+y+'" x2="'+(W-pr)+'" y2="'+y+'" stroke="var(--line)" stroke-width="1"/><text class="axis" x="'+(pl-6)+'" y="'+(y+4)+'" text-anchor="end">'+fmtShort(v)+'</text>';});
+    var svg='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">'+grid+
+      '<path class="chartarea" d="'+area+'"/><path class="chartline" d="'+line+'"/>'+dots+
+      '<text class="axis" x="'+pl+'" y="'+(H-8)+'">22 Oct 2026</text>'+
+      '<text class="axis" x="'+(W-pr)+'" y="'+(H-8)+'" text-anchor="end">'+dstr(end)+'</text>'+
+      '<text class="axis" x="'+X(coords[coords.length-1].t).toFixed(1)+'" y="'+(Y(cum)-10)+'" text-anchor="end" style="font-weight:700;fill:var(--teal)">'+fmt(cum)+'</text></svg>';
+    wrap.innerHTML=svg;
+  }
+
+  function renderMoney(){
+    var t=totals();
+    document.getElementById('kpiEarned').textContent=fmtShort(t.gross);
+    document.getElementById('goal500Now').textContent=fmtShort(t.gross);
+    document.getElementById('goal2000Now').textContent=fmtShort(t.gross);
+    document.getElementById('goal500Left').textContent=fmtShort(Math.max(0,500-t.gross));
+    var p5=Math.min(100,t.gross/500*100), p2=Math.min(100,t.gross/2000*100);
+    document.getElementById('bar500').style.width=p5+'%';
+    document.getElementById('bar2000').style.width=p2+'%';
+    document.getElementById('pct500').textContent=(Math.round(p5*10)/10)+'% there';
+    document.getElementById('pct2000').textContent=(Math.round(p2*10)/10)+'% there';
+    document.getElementById('grossTotal').textContent=fmt(t.gross);
+    var et=document.getElementById('earnTableTotal'); if(et)et.textContent=fmt(t.gross);
+    document.getElementById('expTotal').textContent=fmt(t.exp);
+    document.getElementById('netTotal').textContent=fmt(t.net);
+    var body=document.getElementById('historyBody'), html='', i, s, e;
+    var all=[];
+    sales.forEach(function(x){all.push({date:x.date,label:x.source,type:x.verified?'Sale · verified':'Sale · logged here',amt:x.amount,sign:'+'});});
+    expenses.forEach(function(x){all.push({date:x.date,label:x.item+(x.note?' — '+x.note:''),type:'Expense · logged here',amt:x.amount,sign:'−'});});
+    all.sort(function(a,b){return a.date<b.date?-1:1;});
+    all.forEach(function(r){html+='<tr><td>'+dstr(r.date)+'</td><td>'+r.label.replace(/</g,'&lt;')+'</td><td><span class="tag '+(r.sign==='+'?'live':'warn')+'">'+r.type+'</span></td><td class="num"><strong>'+r.sign+fmt(r.amt)+'</strong></td></tr>';});
+    body.innerHTML=html;
+    drawChart();
+    var note=document.getElementById('chartNote');
+    if(sales.length>1){note.textContent=sales.length+' payments totalling '+fmt(t.gross)+' — latest: '+fmt(sales[sales.length-1].amount)+' on '+dstr(sales[sales.length-1].date)+' ('+sales[sales.length-1].source+').';}
+  }
+
+  document.getElementById('saleForm').addEventListener('submit',function(ev){
+    ev.preventDefault();
+    var amt=parseFloat(document.getElementById('saleAmount').value);
+    if(!(amt>0))return;
+    var src=document.getElementById('saleSource').value;
+    var note=document.getElementById('saleNote').value.trim();
+    var date=document.getElementById('saleDate').value||'2026-11-07';
+    sales.push({date:date,source:src+(note?' — '+note:''),amount:amt,verified:false});
+    entries.push([date,'Sale',src,note,amt.toFixed(2)]);
+    renderMoney();
+    document.getElementById('saleAmount').value='';document.getElementById('saleNote').value='';
+  });
+  document.getElementById('expForm').addEventListener('submit',function(ev){
+    ev.preventDefault();
+    var amt=parseFloat(document.getElementById('expAmount').value);
+    if(!(amt>0))return;
+    var item=document.getElementById('expItem').value;
+    var note=document.getElementById('expNote').value.trim();
+    var date=document.getElementById('expDate').value||'2026-11-07';
+    expenses.push({date:date,item:item,note:note,amount:amt});
+    entries.push([date,'Expense',item,note,('-'+amt.toFixed(2))]);
+    renderMoney();
+    document.getElementById('expAmount').value='';document.getElementById('expNote').value='';
+  });
+  document.getElementById('csvBtn').addEventListener('click',function(){
+    var rows=[['Date','Type','Source / item','Note','Amount USD']];
+    rows.push(['2026-11-03','Sale','LookForIt — Krea paid link placement','Verified','20.00']);
+    entries.forEach(function(r){rows.push(r);});
+    var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+    a.download='syed-enterprises-entries.csv'; a.click();
+    setTimeout(function(){URL.revokeObjectURL(a.href);},2000);
+  });
+  renderMoney();
+
+  /* ---- tasks ---- */
+  var boxes=document.querySelectorAll('#taskList input[type="checkbox"]');
+  function taskUpdate(){
+    var done=0; boxes.forEach(function(b){ if(b.checked)done++; b.closest('.task').classList.toggle('done',b.checked); });
+    document.getElementById('taskProgress').textContent=done+' of '+boxes.length+' done';
+  }
+  boxes.forEach(function(b){b.addEventListener('change',taskUpdate);});
+
+  /* ---- copy buttons ---- */
+  document.querySelectorAll('[data-copy]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var txt=btn.getAttribute('data-copy');
+      function done(){btn.textContent='Copied ✓';setTimeout(function(){btn.textContent='Copy';},1500);}
+      if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,done);}else{done();}
+    });
+  });
+
+  /* ---- outreach updates ---- */
+  document.getElementById('outForm').addEventListener('submit',function(ev){
+    ev.preventDefault();
+    var camp=document.getElementById('outCampaign').value;
+    var name=document.getElementById('outName').value.trim(); if(!name)return;
+    var st=document.getElementById('outStatus').value;
+    var fol=document.getElementById('outFollow').value;
+    var empty=document.getElementById('outEmpty'); if(empty)empty.remove();
+    var tr=document.createElement('tr');
+    function td(t){var d=document.createElement('td');d.textContent=t;return d;}
+    tr.appendChild(td(camp)); tr.appendChild(td(name)); tr.appendChild(td(st)); tr.appendChild(td(fol?dstr(fol):'—'));
+    document.getElementById('outBody').appendChild(tr);
+    document.getElementById('outName').value='';
+  });
+
+  // Method filter
+  var btns=document.querySelectorAll('[data-filter]');
+  var cards=document.querySelectorAll('#methodGrid .card');
+  btns.forEach(function(b){ b.addEventListener('click',function(){
+    btns.forEach(function(x){x.setAttribute('aria-pressed','false')});
+    b.setAttribute('aria-pressed','true');
+    var f=b.getAttribute('data-filter');
+    cards.forEach(function(c){ c.classList.toggle('hidden', f!=='all' && c.getAttribute('data-status')!==f); });
+  });});
+  // Handle search
+  var input=document.getElementById('handleSearch');
+  var handles=document.querySelectorAll('#handleGrid .handle');
+  var none=document.getElementById('noHandles');
+  input.addEventListener('input',function(){
+    var q=input.value.trim().toLowerCase(), visible=0;
+    handles.forEach(function(h){
+      var hit=!q || h.getAttribute('data-name').indexOf(q)>-1 || h.textContent.toLowerCase().indexOf(q)>-1;
+      h.classList.toggle('hidden',!hit); if(hit)visible++;
+    });
+    none.classList.toggle('hidden',visible!==0);
+  });
+})();
+</script>
+</body>
+</html>
