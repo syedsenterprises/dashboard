@@ -504,6 +504,7 @@ code{background:var(--surface2);padding:2px 6px;border-radius:6px;font-size:.82r
   document.getElementById('csvBtn').addEventListener('click',function(){
     var rows=[['Date','Type','Source / item','Note','Amount USD']];
     rows.push(['2026-11-03','Sale','LookForIt — Krea paid link placement','Verified','20.00']);
+    rows.push(['2026-11-11','Sale','Viewpoints reward via Tremendous (PayPal)','Verified','3.00']);
     entries.forEach(function(r){rows.push(r);});
     var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
     var a=document.createElement('a');
