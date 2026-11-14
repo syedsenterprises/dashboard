@@ -148,8 +148,8 @@ code{background:var(--surface2);padding:2px 6px;border-radius:6px;font-size:.82r
     <div class="dual-goals">
       <div class="kpi">
         <b><span id="goal500Now">$20</span> <span style="font-size:1rem;color:var(--muted)">/ $500 goal</span></b>
-        <span>Current income goal tracked in your 4×-daily progress reports · <span id="goal500Left">$477</span> to go</span>
-        <div class="bar" role="img" aria-label="Progress toward 500 dollar goal"><i id="bar500" style="width:4.6%"></i></div>
+        <span>Current income goal tracked in your 4×-daily progress reports · <span id="goal500Left">$480</span> to go</span>
+        <div class="bar" role="img" aria-label="Progress toward 500 dollar goal"><i id="bar500" style="width:4.0%"></i></div>
         <span id="pct500">4.0% there</span>
       </div>
       <div class="kpi">
@@ -410,7 +410,7 @@ code{background:var(--surface2);padding:2px 6px;border-radius:6px;font-size:.82r
   function dstr(iso){var d=new Date(iso+'T00:00:00');return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});}
 
   /* ---- money state (this visit) ---- */
-  var sales=[{date:'2026-11-03',source:'LookForIt — Krea paid link placement (Tobi)',amount:20,verified:true},{date:'2026-11-11',source:'Viewpoints reward via Tremendous (PayPal)',amount:3,verified:true}];
+  var sales=[{date:'2026-11-03',source:'LookForIt — Krea paid link placement (Tobi)',amount:20,verified:true}];
   var expenses=[];
   var entries=[]; // session entries for CSV
 
@@ -504,7 +504,7 @@ code{background:var(--surface2);padding:2px 6px;border-radius:6px;font-size:.82r
   document.getElementById('csvBtn').addEventListener('click',function(){
     var rows=[['Date','Type','Source / item','Note','Amount USD']];
     rows.push(['2026-11-03','Sale','LookForIt — Krea paid link placement','Verified','20.00']);
-    rows.push(['2026-11-11','Sale','Viewpoints reward via Tremendous (PayPal)','Verified','3.00']);
+    
     entries.forEach(function(r){rows.push(r);});
     var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
     var a=document.createElement('a');
