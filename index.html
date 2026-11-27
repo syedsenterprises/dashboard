@@ -19,14 +19,17 @@
   --red:#ff9a8f; --red-soft:#40201c; --blue:#8ec2ef; --blue-soft:#1b3045; }
 }
 *{box-sizing:border-box}
+html,body{overflow-x:clip}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:ui-sans-system,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5}
 a{color:var(--teal);text-decoration:none} a:hover{text-decoration:underline}
 .wrap{max-width:1180px;margin:0 auto;padding:22px 18px 56px}
-h1,h2,h3{font-family:Georgia,"Times New Roman",serif;line-height:1.15;margin:0}
-h2{font-size:1.45rem;margin-bottom:6px}
-h3{font-size:1.05rem}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;line-height:1.15;margin:0;text-wrap:balance}
+h2{font-size:clamp(2rem,3.6vw,3.25rem);margin-bottom:6px}
+h3{font-size:clamp(1.25rem,1.75vw,1.5rem)}
+p{text-wrap:pretty}
+p.small{max-width:75ch}
 .lede{color:var(--muted);max-width:68ch}
-.section{margin-top:34px}
+.section{margin-top:120px}
 .section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:14px}
 .small{font-size:.86rem;color:var(--muted)}
 .tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:var(--surface2);color:var(--muted)}
@@ -35,9 +38,9 @@ h3{font-size:1.05rem}
 .tag.blocked{background:var(--red-soft);color:var(--red)}
 .tag.info{background:var(--blue-soft);color:var(--blue)}
 /* hero */
-.hero{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:26px}
-.hero-top{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
-.hero h1{font-size:clamp(1.9rem,4.5vw,2.8rem);max-width:18ch}
+.hero{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:26px;display:flex;flex-direction:column;justify-content:center;min-height:calc(100vh - 44px)}
+.masthead{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.hero h1{font-size:clamp(2.4rem,5vw,3.75rem);max-width:18ch}
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:22px}
 .kpi{background:var(--surface2);border-radius:var(--radius);padding:16px}
 .kpi b{display:block;font-size:1.7rem;line-height:1;font-family:Georgia,serif}
@@ -49,9 +52,12 @@ h3{font-size:1.05rem}
 /* grid cards */
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.grid>*,.grid2>*,.kpis>*,.sched>*,.deadlines>*,.netline>*{min-width:0}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
 .card p{margin:8px 0 0;color:var(--muted);font-size:.93rem}
-.card .row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.card .row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.card .row>*{min-width:0}
+.card .row h3{overflow-wrap:anywhere}
 .price{font-weight:800;white-space:nowrap}
 .card a.btn{display:inline-block;margin-top:12px;font-size:.86rem;font-weight:700;border:1px solid var(--teal);color:var(--teal);padding:7px 12px;border-radius:9px}
 .card a.btn:hover{background:var(--teal-soft);text-decoration:none}
@@ -66,25 +72,28 @@ h3{font-size:1.05rem}
 .filters button{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 14px;border-radius:999px;font-weight:700;cursor:pointer;font-size:.88rem}
 .filters button[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#fff}
 @media (prefers-color-scheme: dark){.filters button[aria-pressed="true"]{color:#0b1513}}
-.search{flex:1;min-width:200px;padding:10px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:.95rem}
+.search{flex:1;min-width:200px;padding:10px 14px;border-radius:999px;border:1px solid var(--muted);background:var(--surface2);color:var(--ink);font-size:.95rem}
 /* alerts */
+.alerts{max-width:83.333%;margin-left:auto;margin-right:auto}
 .alert{display:flex;gap:12px;background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--amber);border-radius:12px;padding:15px 16px;margin-bottom:10px}
 .alert.red{border-left-color:var(--red)}
 .alert strong{display:block}
 .alert p{margin:2px 0 0;color:var(--muted);font-size:.92rem}
 /* handles */
-.handle{display:flex;justify-content:space-between;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.handle{display:flex;justify-content:space-between;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;flex-wrap:wrap}
+.handle>*{min-width:0}
+.handle>div{overflow-wrap:anywhere}
 .handle b{display:block}.handle span{color:var(--muted);font-size:.88rem}
 /* schedule */
 .sched{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .sched .card{text-align:left}.sched b{font-family:Georgia,serif;font-size:1.25rem;display:block}
-footer{margin-top:40px;color:var(--muted);font-size:.85rem;border-top:1px solid var(--line);padding-top:16px}
+footer{margin-top:132px;color:var(--muted);font-size:.85rem;border-top:1px solid var(--line);padding-top:16px}
 .hidden{display:none!important}
 /* forms / money tools */
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
 .form{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
 .form label{font-size:.8rem;font-weight:700;color:var(--muted);display:block}
-.form input,.form select{width:100%;margin-top:4px;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:.93rem;font-family:inherit}
+.form input,.form select{width:100%;margin-top:4px;padding:9px 11px;border:1px solid var(--muted);border-radius:9px;background:var(--surface2);color:var(--ink);font-size:.93rem;font-family:inherit}
 .form button{align-self:end;padding:10px 14px;border:none;border-radius:9px;background:var(--teal);color:#fff;font-weight:800;cursor:pointer;font-size:.92rem}
 @media (prefers-color-scheme: dark){.form button{color:#0b1513}}
 .form button:hover{opacity:.88}
@@ -129,7 +138,7 @@ code{background:var(--surface2);padding:2px 6px;border-radius:6px;font-size:.82r
 
   <!-- HERO / OVERVIEW -->
   <header class="hero">
-    <div class="hero-top">
+    <div class="masthead">
       <div>
         <p class="small" style="margin:0 0 8px">SYED ENTERPRISES · FOUNDER: SYED SHAHED · HYDERABAD</p>
         <h1>Everything you run, in one place.</h1>
@@ -290,11 +299,13 @@ code{background:var(--surface2);padding:2px 6px;border-radius:6px;font-size:.82r
   <!-- NEEDS ATTENTION -->
   <section class="section" aria-labelledby="alert-h">
     <div class="section-head"><div><h2 id="alert-h">Needs attention</h2><p class="small">Real blockers from your mail and site checks this week — in priority order.</p></div></div>
+    <div class="alerts">
     <div class="alert red"><div>🔴</div><div><strong>RepRoaster on Whop — payment failed (7 Nov, 03:36 IST)</strong><p>Kotak debit card declined, insufficient funds. Whop says the subscription is at risk of cancellation and its webhook has been failing for 24 hours — checkout is at risk until this is paid.</p></div></div>
     <div class="alert"><div>🟡</div><div><strong>Estate Path — AdSense “Needs attention: low-value content”</strong><p>Do <em>not</em> click “Request review” yet. First fix: the About page 404, the stale / duplicated Amendment 3 posts, the off-topic Mexico post, and the author bio. Ads won’t serve until a post-fix review passes.</p></div></div>
     <div class="alert"><div>🟡</div><div><strong>LookForIt — sitemap “Couldn’t fetch” in Search Console since 27 Oct</strong><p>Re-submitted 7 Nov, still failing, 0 pages via sitemap — though the file itself loads fine and Bing has it (185 URLs, success). Needs a re-check once Google retries.</p></div></div>
     <div class="alert"><div>🟡</div><div><strong>Two sites still unverified in Search Console &amp; Bing</strong><p><strong>letusassume.in</strong> and <strong>reproaster.store</strong> each need one DNS TXT record added, then verification, sitemap and indexing can be run for both.</p></div></div>
     <div class="alert"><div>🟡</div><div><strong>RepRoaster “www” subdomain still not loading</strong><p>Apex (reproaster.store) is live and checkout works there. Don’t re-add www in Replit Domains or edit DNS on this check alone.</p></div></div>
+    </div>
   </section>
 
   <!-- METHODS -->
